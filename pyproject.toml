@@ -35,6 +35,14 @@ strict = true
 module = ["lerobot.*", "mlflow.*", "omegaconf.*", "hydra.*"]
 ignore_missing_imports = true
 
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["unit: fast unit tests without GPU"]
+addopts = "--cov=src/mlcore --cov-report=term-missing --cov-fail-under=60"
+markers = [
+    "unit: fast unit tests without GPU",
+    "gpu: tests requiring GPU",
+]
