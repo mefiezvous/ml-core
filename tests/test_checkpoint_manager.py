@@ -5,10 +5,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from typing import Any
+from unittest.mock import patch
 
 import pytest
-import torch
 
 
 @pytest.mark.unit
@@ -19,10 +19,12 @@ class TestCheckpointManager:
         hf_repo_id: str | None = None,
         push_every: int = 100,
         keep_last_n: int = 3,
-    ) -> "CheckpointManager":  # type: ignore[name-defined]
+    ) -> Any:
         from mlcore.training.checkpoint_manager import CheckpointManager
 
-        return CheckpointManager(tmp_path, hf_repo_id=hf_repo_id, push_every=push_every, keep_last_n=keep_last_n)
+        return CheckpointManager(
+            tmp_path, hf_repo_id=hf_repo_id, push_every=push_every, keep_last_n=keep_last_n
+        )
 
     def test_save_local_creates_file(self, tmp_path: Path) -> None:
         m = self._make_manager(tmp_path)

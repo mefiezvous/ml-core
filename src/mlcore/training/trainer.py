@@ -90,7 +90,7 @@ class Trainer:
             self._wandb_enabled = False
             return
         try:
-            import wandb  # type: ignore[import-untyped]  # noqa: PLC0415
+            import wandb  # noqa: PLC0415
 
             wandb.init(
                 project=self._cfg.logging.experiment_name,
@@ -163,7 +163,7 @@ class Trainer:
 
                 self._optimizer.zero_grad()
                 loss_tensor = self._policy.forward(batch)
-                loss_tensor.backward()
+                loss_tensor.backward()  # type: ignore[no-untyped-call]
                 self._optimizer.step()
 
                 current_step = step + 1

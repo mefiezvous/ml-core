@@ -13,7 +13,6 @@ import pytest
 import torch
 from omegaconf import OmegaConf
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -80,7 +79,9 @@ class TestTrainer:
         from mlcore.training.trainer import Trainer  # noqa: PLC0415
 
         with patch("mlcore.training.trainer.mlflow"):
-            trainer = Trainer(cfg, policy, dataloader, robot_name=robot_name, policy_type=policy_type)
+            trainer = Trainer(
+                cfg, policy, dataloader, robot_name=robot_name, policy_type=policy_type
+            )
         return trainer
 
     def test_checkpoint_dir_uses_robot_name_and_policy_type(

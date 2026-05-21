@@ -5,13 +5,14 @@
 from __future__ import annotations
 
 import shutil
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
 
 
 @pytest.fixture(autouse=True)
-def clean_checkpoints() -> "Generator[None, None, None]":  # type: ignore[name-defined]
+def clean_checkpoints() -> Generator[None, None, None]:
     """Remove any leftover checkpoint directories before and after each test."""
     ckpt_root = Path("checkpoints")
     if ckpt_root.exists():

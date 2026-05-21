@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import torch
 from loguru import logger
@@ -40,7 +41,7 @@ class CheckpointManager:
         self._push_every = push_every
         self._keep_last_n = keep_last_n
 
-    def save(self, state: dict, step: int) -> Path:
+    def save(self, state: dict[str, Any], step: int) -> Path:
         """Save checkpoint locally and push to Hub if on interval."""
         self._local_dir.mkdir(parents=True, exist_ok=True)
         path = self._local_dir / f"step_{step:06d}.pt"
@@ -51,13 +52,13 @@ class CheckpointManager:
             self._push_to_hub(path, step)
         return path
 
-    def load_latest(self) -> tuple[dict, int] | None:
+    def load_latest(self) -> tuple[dict[str, Any], int] | None:
         """Load the most recent checkpoint. Returns (state, step) or None."""
         checkpoints = self.list_checkpoints()
         if not checkpoints:
             return None
         step, path = checkpoints[-1]
-        state: dict = torch.load(path, weights_only=False)
+        state: dict[str, Any] = torch.load(path, weights_only=False)
         return state, step
 
     def list_checkpoints(self) -> list[tuple[int, Path]]:

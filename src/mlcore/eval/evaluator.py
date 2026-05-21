@@ -69,7 +69,7 @@ class Evaluator:
 
     def _build_env(self) -> Any:
         try:
-            import mujoco_playground as mp  # type: ignore[import-untyped]  # noqa: PLC0415
+            import mujoco_playground as mp  # type: ignore[import-not-found]  # noqa: PLC0415
 
             return mp.make(self._env_name)
         except (ImportError, AttributeError) as exc:

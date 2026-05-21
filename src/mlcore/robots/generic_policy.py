@@ -26,7 +26,7 @@ class GenericScriptedPolicy:
         self._spec = spec
         self._gain = gain
 
-    def select_action(self, obs: dict[str, Any]) -> np.ndarray:
+    def select_action(self, obs: dict[str, Any]) -> np.ndarray[Any, np.dtype[Any]]:
         """Return an action of shape (spec.action_dim,) that moves EE toward target.
 
         Args:

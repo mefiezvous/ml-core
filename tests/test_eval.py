@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
@@ -93,7 +92,9 @@ class TestEvaluator:
         assert "eval/success_rate" in logged
         assert "eval/mean_reward" in logged
 
-    def test_eval_report_written_to_namespaced_path(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_eval_report_written_to_namespaced_path(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         from mlcore.eval.evaluator import Evaluator  # noqa: PLC0415
 
         monkeypatch.chdir(tmp_path)

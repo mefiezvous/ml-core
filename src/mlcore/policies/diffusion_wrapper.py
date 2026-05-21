@@ -13,17 +13,17 @@ from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
 try:
-    from lerobot.common.policies.diffusion.configuration_diffusion import (  # type: ignore[import-untyped]
+    from lerobot.common.policies.diffusion.configuration_diffusion import (
         DiffusionConfig,
     )
-    from lerobot.common.policies.diffusion.modeling_diffusion import (  # type: ignore[import-untyped]
+    from lerobot.common.policies.diffusion.modeling_diffusion import (
         DiffusionPolicy,
     )
 
     _LEROBOT_AVAILABLE = True
 except ImportError:
-    DiffusionPolicy = None  # type: ignore[assignment,misc]
-    DiffusionConfig = None  # type: ignore[assignment,misc]
+    DiffusionPolicy = None  # type: ignore[assignment]
+    DiffusionConfig = None  # type: ignore[assignment]
     _LEROBOT_AVAILABLE = False
 
 
@@ -70,7 +70,9 @@ class DiffusionWrapper:
 
         self._policy.to(self._device)
 
-    def select_action(self, obs: dict[str, np.ndarray]) -> np.ndarray:
+    def select_action(
+        self, obs: dict[str, np.ndarray[Any, np.dtype[Any]]]
+    ) -> np.ndarray[Any, np.dtype[Any]]:
         """Convert an observation dict to a flat action array."""
         batch: dict[str, torch.Tensor] = {
             k: torch.tensor(v, dtype=torch.float32, device=self._device).unsqueeze(0)
@@ -101,9 +103,17 @@ class DiffusionWrapper:
         self._policy.load_state_dict(checkpoint["model"])
         logger.debug(f"DiffusionWrapper checkpoint loaded ← {path}")
 
+    def state_dict(self) -> dict[str, Any]:
+        """Return underlying policy state dict."""
+        return dict(self._policy.state_dict())  # type: ignore[arg-type]
+
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+        """Load weights from a state dict."""
+        self._policy.load_state_dict(state_dict)
+
     def parameters(self) -> Iterator[torch.nn.Parameter]:
         """Yield underlying policy parameters for the optimiser."""
-        return self._policy.parameters()  # type: ignore[return-value]
+        return self._policy.parameters()  # type: ignore[return-value, no-any-return]
 
     @property
     def lerobot_policy(self) -> Any:

@@ -13,17 +13,17 @@ from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
 try:
-    from lerobot.common.policies.act.configuration_act import (  # type: ignore[import-untyped]
+    from lerobot.common.policies.act.configuration_act import (
         ACTConfig,
     )
-    from lerobot.common.policies.act.modeling_act import (  # type: ignore[import-untyped]
+    from lerobot.common.policies.act.modeling_act import (
         ACTPolicy,
     )
 
     _LEROBOT_AVAILABLE = True
 except ImportError:
-    ACTPolicy = None  # type: ignore[assignment,misc]
-    ACTConfig = None  # type: ignore[assignment,misc]
+    ACTPolicy = None  # type: ignore[assignment]
+    ACTConfig = None  # type: ignore[assignment]
     _LEROBOT_AVAILABLE = False
 
 
@@ -71,7 +71,9 @@ class ACTWrapper:
 
         self._policy.to(self._device)
 
-    def select_action(self, obs: dict[str, np.ndarray]) -> np.ndarray:
+    def select_action(
+        self, obs: dict[str, np.ndarray[Any, np.dtype[Any]]]
+    ) -> np.ndarray[Any, np.dtype[Any]]:
         """Convert an observation dict to a flat action array.
 
         Args:
@@ -109,9 +111,17 @@ class ACTWrapper:
         self._policy.load_state_dict(checkpoint["model"])
         logger.debug(f"ACTWrapper checkpoint loaded ← {path}")
 
+    def state_dict(self) -> dict[str, Any]:
+        """Return underlying policy state dict."""
+        return dict(self._policy.state_dict())  # type: ignore[arg-type]
+
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+        """Load weights from a state dict."""
+        self._policy.load_state_dict(state_dict)
+
     def parameters(self) -> Iterator[torch.nn.Parameter]:
         """Yield underlying policy parameters for the optimiser."""
-        return self._policy.parameters()  # type: ignore[return-value]
+        return self._policy.parameters()  # type: ignore[return-value, no-any-return]
 
     @property
     def lerobot_policy(self) -> Any:
