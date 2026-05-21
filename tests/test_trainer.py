@@ -207,6 +207,7 @@ class TestTrainer:
             trainer = Trainer(
                 training_cfg, policy, dataloader, robot_name="r", policy_type="act"
             )
+            trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 
         assert policy.forward.call_count == 6
@@ -237,6 +238,7 @@ class TestTrainer:
             trainer = Trainer(
                 training_cfg, policy, dataloader, robot_name="r", policy_type="act"
             )
+            trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 
         assert mock_mlflow.log_metrics.call_count == 2
@@ -270,6 +272,7 @@ class TestTrainer:
             trainer = Trainer(
                 training_cfg, policy, short_dataloader, robot_name="r", policy_type="act"
             )
+            trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 
         assert policy.forward.call_count == 6
