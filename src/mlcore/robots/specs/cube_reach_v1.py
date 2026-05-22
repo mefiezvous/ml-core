@@ -11,7 +11,7 @@ CUBE_REACH_V1 = RobotSpec(
     name="cube_reach_v1",
     n_joints=7,
     obs_keys=["ee_pos", "cube_pos", "joints"],
-    action_dim=7,
+    action_dim=8,  # 7 joints + 1 gripper
     ee_pos_key="ee_pos",
     target_pos_key="cube_pos",
 )

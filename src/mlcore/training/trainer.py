@@ -74,6 +74,15 @@ class Trainer:
         mlflow.set_tracking_uri(self._mlflow_tracking_uri)
         mlflow.set_experiment(self._cfg.logging.experiment_name)
         mlflow.start_run(run_name=self._cfg.logging.run_name)
+        dataset_cfg = self._cfg.get("dataset", {})
+        mlflow.set_tags(
+            {
+                "dataset.repo_id": dataset_cfg.get("repo_id", "unknown"),
+                "dataset.root": str(dataset_cfg.get("root", "hub")),
+                "policy.type": self._policy_type,
+                "robot.name": self._robot_name,
+            }
+        )
         logger.info(
             f"MLflow run started | experiment={self._cfg.logging.experiment_name} "
             f"run={self._cfg.logging.run_name}"

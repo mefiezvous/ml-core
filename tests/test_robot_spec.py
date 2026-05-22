@@ -84,4 +84,4 @@ def test_config_builder_generates_yaml() -> None:
 def test_cube_reach_v1_registered() -> None:
     spec = get("cube_reach_v1")
     assert spec.n_joints == 7
-    assert spec.action_dim == 7
+    assert spec.action_dim == 8
