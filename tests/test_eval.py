@@ -43,8 +43,12 @@ class TestEvaluator:
         policy = _make_mock_policy()
         env = _make_mock_env()
         ev = Evaluator(
-            policy, "CubeReachV1", n_episodes=5, env=env,
-            robot_name="test_robot", policy_type="act",
+            policy,
+            "CubeReachV1",
+            n_episodes=5,
+            env=env,
+            robot_name="test_robot",
+            policy_type="act",
         )
         result = ev.evaluate()
 
@@ -65,8 +69,12 @@ class TestEvaluator:
         ]
 
         ev = Evaluator(
-            policy, "CubeReachV1", n_episodes=3, env=env,
-            robot_name="test_robot", policy_type="act",
+            policy,
+            "CubeReachV1",
+            n_episodes=3,
+            env=env,
+            robot_name="test_robot",
+            policy_type="act",
         )
         result = ev.evaluate()
 
@@ -81,8 +89,13 @@ class TestEvaluator:
 
         with patch("mlcore.eval.evaluator.mlflow") as mock_mlflow:
             ev = Evaluator(
-                policy, "CubeReachV1", n_episodes=2, mlflow_run_id="run_abc", env=env,
-                robot_name="test_robot", policy_type="act",
+                policy,
+                "CubeReachV1",
+                n_episodes=2,
+                mlflow_run_id="run_abc",
+                env=env,
+                robot_name="test_robot",
+                policy_type="act",
             )
             ev.evaluate()
 
@@ -102,8 +115,12 @@ class TestEvaluator:
         env = _make_mock_env(success=True)
 
         ev = Evaluator(
-            policy, "CubeReachV1", n_episodes=2, env=env,
-            robot_name="my_robot", policy_type="diffusion",
+            policy,
+            "CubeReachV1",
+            n_episodes=2,
+            env=env,
+            robot_name="my_robot",
+            policy_type="diffusion",
         )
         ev.evaluate()
 
@@ -118,16 +135,24 @@ class TestEvaluator:
 
         with pytest.raises(ValueError, match="n_episodes"):
             Evaluator(
-                _make_mock_policy(), "CubeReachV1", n_episodes=0, env=_make_mock_env(),
-                robot_name="r", policy_type="act",
+                _make_mock_policy(),
+                "CubeReachV1",
+                n_episodes=0,
+                env=_make_mock_env(),
+                robot_name="r",
+                policy_type="act",
             )
 
     def test_report_path_uses_robot_name_and_policy_type(self) -> None:
         from mlcore.eval.evaluator import Evaluator  # noqa: PLC0415
 
         ev = Evaluator(
-            _make_mock_policy(), "CubeReachV1", n_episodes=1, env=_make_mock_env(),
-            robot_name="my_robot", policy_type="act",
+            _make_mock_policy(),
+            "CubeReachV1",
+            n_episodes=1,
+            env=_make_mock_env(),
+            robot_name="my_robot",
+            policy_type="act",
         )
         assert "my_robot" in str(ev._report_path)
         assert "act" in str(ev._report_path)

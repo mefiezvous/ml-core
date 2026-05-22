@@ -102,9 +102,7 @@ class TestTrainer:
         assert "my_robot" in str(trainer._checkpoint_dir)
         assert "act" in str(trainer._checkpoint_dir)
 
-    def test_mlflow_tracking_uri_uses_robot_name_and_policy_type(
-        self, training_cfg: Any
-    ) -> None:
+    def test_mlflow_tracking_uri_uses_robot_name_and_policy_type(self, training_cfg: Any) -> None:
         from mlcore.training.trainer import Trainer  # noqa: PLC0415
 
         policy = _make_mock_policy()
@@ -139,9 +137,7 @@ class TestTrainer:
 
         mock_mlflow.set_experiment.assert_called_once_with("test_experiment")
 
-    def test_detect_no_checkpoint_returns_none(
-        self, training_cfg: Any, tmp_path: Path
-    ) -> None:
+    def test_detect_no_checkpoint_returns_none(self, training_cfg: Any, tmp_path: Path) -> None:
         from mlcore.training.trainer import Trainer  # noqa: PLC0415
 
         policy = _make_mock_policy()
@@ -152,9 +148,7 @@ class TestTrainer:
 
         assert trainer._detect_latest_checkpoint() is None
 
-    def test_detect_checkpoint_finds_latest(
-        self, training_cfg: Any, tmp_path: Path
-    ) -> None:
+    def test_detect_checkpoint_finds_latest(self, training_cfg: Any, tmp_path: Path) -> None:
         from mlcore.training.trainer import Trainer  # noqa: PLC0415
 
         policy = _make_mock_policy()
@@ -185,9 +179,7 @@ class TestTrainer:
         )
         policy = _make_mock_policy()
         with patch("mlcore.training.trainer.mlflow"):
-            trainer = Trainer(
-                cfg, policy, _make_dataloader(), robot_name="r", policy_type="act"
-            )
+            trainer = Trainer(cfg, policy, _make_dataloader(), robot_name="r", policy_type="act")
 
         # Mock load_latest to avoid real file I/O
         trainer.ckpt_manager.load_latest = MagicMock(  # type: ignore[method-assign]
@@ -205,9 +197,7 @@ class TestTrainer:
         dataloader = _make_dataloader(n_batches=20)
 
         with patch("mlcore.training.trainer.mlflow"):
-            trainer = Trainer(
-                training_cfg, policy, dataloader, robot_name="r", policy_type="act"
-            )
+            trainer = Trainer(training_cfg, policy, dataloader, robot_name="r", policy_type="act")
             trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 
@@ -220,9 +210,7 @@ class TestTrainer:
         dataloader = _make_dataloader(n_batches=20)
 
         with patch("mlcore.training.trainer.mlflow"):
-            trainer = Trainer(
-                training_cfg, policy, dataloader, robot_name="r", policy_type="act"
-            )
+            trainer = Trainer(training_cfg, policy, dataloader, robot_name="r", policy_type="act")
             trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 
@@ -236,9 +224,7 @@ class TestTrainer:
         dataloader = _make_dataloader(n_batches=20)
 
         with patch("mlcore.training.trainer.mlflow") as mock_mlflow:
-            trainer = Trainer(
-                training_cfg, policy, dataloader, robot_name="r", policy_type="act"
-            )
+            trainer = Trainer(training_cfg, policy, dataloader, robot_name="r", policy_type="act")
             trainer.ckpt_manager.save = MagicMock(return_value=Path("step_000003.pt"))  # type: ignore[method-assign]
             trainer.train()
 

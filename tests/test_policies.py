@@ -271,9 +271,7 @@ class TestDiffusionWrapper:
         ):
             mock_cls.from_pretrained.return_value = mock_policy
             DiffusionWrapper(diffusion_cfg_pretrained, device="cpu")
-            mock_cls.from_pretrained.assert_called_once_with(
-                "mefiezvous/cube-reach-v1-diffusion"
-            )
+            mock_cls.from_pretrained.assert_called_once_with("mefiezvous/cube-reach-v1-diffusion")
 
     def test_select_action_returns_numpy_of_correct_shape(self, diffusion_cfg: Any) -> None:
         from mlcore.policies.diffusion_wrapper import DiffusionWrapper  # noqa: PLC0415

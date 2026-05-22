@@ -104,8 +104,7 @@ class Evaluator:
             if ep_success:
                 n_successes += 1
             logger.debug(
-                f"Episode {ep + 1}/{self._n_episodes} "
-                f"reward={ep_reward:.2f} success={ep_success}"
+                f"Episode {ep + 1}/{self._n_episodes} reward={ep_reward:.2f} success={ep_success}"
             )
 
         result = EvalResult(

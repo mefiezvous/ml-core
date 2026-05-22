@@ -22,8 +22,8 @@ try:
 
     _LEROBOT_AVAILABLE = True
 except ImportError:
-    DiffusionPolicy = None  # type: ignore[assignment]
-    DiffusionConfig = None  # type: ignore[assignment]
+    DiffusionPolicy = None
+    DiffusionConfig = None
     _LEROBOT_AVAILABLE = False
 
 
@@ -105,7 +105,7 @@ class DiffusionWrapper:
 
     def state_dict(self) -> dict[str, Any]:
         """Return underlying policy state dict."""
-        return dict(self._policy.state_dict())  # type: ignore[arg-type]
+        return dict(self._policy.state_dict())
 
     def load_state_dict(self, state_dict: dict[str, Any]) -> None:
         """Load weights from a state dict."""
@@ -113,7 +113,7 @@ class DiffusionWrapper:
 
     def parameters(self) -> Iterator[torch.nn.Parameter]:
         """Yield underlying policy parameters for the optimiser."""
-        return self._policy.parameters()  # type: ignore[return-value, no-any-return]
+        return self._policy.parameters()
 
     @property
     def lerobot_policy(self) -> Any:
