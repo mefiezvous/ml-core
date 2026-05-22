@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterator, cast
 
 import numpy as np
 import torch
@@ -113,7 +113,7 @@ class DiffusionWrapper:
 
     def parameters(self) -> Iterator[torch.nn.Parameter]:
         """Yield underlying policy parameters for the optimiser."""
-        return self._policy.parameters()
+        return cast(Iterator[torch.nn.Parameter], self._policy.parameters())
 
     @property
     def lerobot_policy(self) -> Any:
