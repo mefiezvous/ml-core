@@ -14,5 +14,6 @@ CUBE_REACH_V1 = RobotSpec(
     action_dim=8,  # 7 joints + 1 gripper
     ee_pos_key="ee_pos",
     target_pos_key="cube_pos",
+    relational_features=(("cube_pos", "ee_pos"),),
 )
 register(CUBE_REACH_V1)
