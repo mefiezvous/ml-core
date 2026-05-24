@@ -56,6 +56,15 @@ Artefact paths are always namespaced as `{robot_name}/{policy_type}/`:
 | MLflow runs | `mlruns/{robot_name}_{policy_type}/` |
 | Eval reports | `eval_reports/{robot_name}/{policy_type}/eval_report.json` |
 
+## Add a robot
+
+RobotSpecs live under [`src/mlcore/robots/specs/`](src/mlcore/robots/specs/) — one
+dataclass per robot, picked up by `mlcore.robots.get(name)` and validated against
+the env at pipeline startup via `mlcore.robots.validate_spec_against_env`.
+
+The canonical end-to-end tutorial (scaffold → collect → train → eval) lives in
+the template repo: [robotics-platform-template/docs/ADD_A_ROBOT.md](../robotics-platform-template/docs/ADD_A_ROBOT.md).
+
 ## Documentation
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — module map, contracts, consumers
