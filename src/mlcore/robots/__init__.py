@@ -11,3 +11,5 @@ from mlcore.robots.registry import register as register
 from mlcore.robots.specs import (
     cube_reach_v1 as _cube_reach_v1,  # noqa: F401 — triggers registration
 )
+from mlcore.robots.validate import RobotSpecMismatch as RobotSpecMismatch
+from mlcore.robots.validate import validate_spec_against_env as validate_spec_against_env
