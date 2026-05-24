@@ -68,9 +68,7 @@ def build_features(
         ValueError: If ``len(state_names) != state_dim``.
     """
     if len(state_names) != state_dim:
-        raise ValueError(
-            f"state_names has length {len(state_names)} but state_dim is {state_dim}"
-        )
+        raise ValueError(f"state_names has length {len(state_names)} but state_dim is {state_dim}")
 
     cameras: list[str] = list(image_keys) if image_keys is not None else []
 

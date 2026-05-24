@@ -23,9 +23,7 @@ class _FakeEnv:
     def _obs(self) -> dict[str, NDArray[np.floating[Any]]]:
         return {"ee_pos": np.zeros(3, dtype=np.float32)}
 
-    def reset(
-        self, seed: int
-    ) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
+    def reset(self, seed: int) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
         self._step_count = 0
         return self._obs(), {"seed": seed}
 

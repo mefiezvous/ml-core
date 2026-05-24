@@ -86,9 +86,7 @@ class HubSink:
             RuntimeError: If ``lerobot`` is not importable.
         """
         if LeRobotDataset is None:
-            raise RuntimeError(
-                "lerobot is required for dataset export. Install with: uv sync"
-            )
+            raise RuntimeError("lerobot is required for dataset export. Install with: uv sync")
 
         features: dict[str, Any] = build_features(
             state_dim=obs_builder.state_dim,
@@ -120,9 +118,7 @@ class HubSink:
             dataset.save_episode(task=episode.task_description)
             logger.debug(f"Saved episode {ep_idx + 1}/{len(episodes)}")
 
-        logger.info(
-            f"Dataset saved to {root} | episodes={len(episodes)} | frames={total_frames}"
-        )
+        logger.info(f"Dataset saved to {root} | episodes={len(episodes)} | frames={total_frames}")
 
         if push_to_hub:
             dataset.push_to_hub(self._repo_id)

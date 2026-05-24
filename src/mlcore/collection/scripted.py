@@ -72,9 +72,7 @@ class ScriptedReachPolicy:
         action = np.zeros(self._action_dim, dtype=np.float32)
         action[:3] = self._gain * delta[:3]
         if self._noise_scale > 0.0:
-            noise = self._rng.normal(0.0, self._noise_scale, self._action_dim).astype(
-                np.float32
-            )
+            noise = self._rng.normal(0.0, self._noise_scale, self._action_dim).astype(np.float32)
             action += noise
         return np.clip(action, -1.0, 1.0).astype(np.float32, copy=False)
 
@@ -141,8 +139,7 @@ class ScriptedCollector:
                 )
             )
             logger.info(
-                f"Episode {i + 1}/{n_episodes} done | "
-                f"steps={len(ep_rewards)} | success={success}"
+                f"Episode {i + 1}/{n_episodes} done | steps={len(ep_rewards)} | success={success}"
             )
 
         env.close()

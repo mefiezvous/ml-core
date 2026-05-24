@@ -58,9 +58,7 @@ class EnvLike(Protocol):
     ``EnvAdapter`` — is a valid argument to :meth:`Collector.collect`.
     """
 
-    def reset(
-        self, seed: int
-    ) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
+    def reset(self, seed: int) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
         """Reset to an initial state and return ``(obs, info)``."""
         ...
 

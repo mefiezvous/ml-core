@@ -74,9 +74,7 @@ class ObservationBuilder:
     # Construction helpers
     # ------------------------------------------------------------------
     @classmethod
-    def from_spec(
-        cls, spec: RobotSpec, obs_sample: dict[str, Any]
-    ) -> ObservationBuilder:
+    def from_spec(cls, spec: RobotSpec, obs_sample: dict[str, Any]) -> ObservationBuilder:
         """Build from a :class:`RobotSpec` using ``obs_sample`` to resolve shapes.
 
         The ``keys`` are ``spec.obs_keys`` followed by ``spec.extra_obs_keys``,
@@ -131,9 +129,7 @@ class ObservationBuilder:
                 raise KeyError(key)
             arr = np.asarray(obs[key], dtype=np.float32).reshape(-1)
             if arr.shape[0] != expected_len:
-                raise ValueError(
-                    f"key {key!r}: expected length {expected_len}, got {arr.shape[0]}"
-                )
+                raise ValueError(f"key {key!r}: expected length {expected_len}, got {arr.shape[0]}")
             resolved[key] = arr
             parts.append(arr)
 

@@ -34,9 +34,7 @@ def _multitask_dataset(per_task: int = 25, n_tasks: int = 4) -> _FakeDataset:
 @pytest.mark.unit
 def test_multitask_sampler_each_batch_uses_exactly_tasks_per_batch_tasks() -> None:
     ds = _multitask_dataset()
-    sampler = MultiTaskBalancedSampler(
-        ds, tasks_per_batch=2, batch_size=8, seed=123
-    )
+    sampler = MultiTaskBalancedSampler(ds, tasks_per_batch=2, batch_size=8, seed=123)
 
     indices = list(sampler)
     # 100 frames / 8 batch_size = 12 full batches → 96 indices.
@@ -90,9 +88,7 @@ def test_multitask_sampler_handles_small_bucket_with_replacement() -> None:
         *({"task_id": "common", "success": True} for _ in range(10)),
     ]
     ds = _FakeDataset(records)
-    sampler = MultiTaskBalancedSampler(
-        ds, tasks_per_batch=2, batch_size=8, seed=0, num_samples=8
-    )
+    sampler = MultiTaskBalancedSampler(ds, tasks_per_batch=2, batch_size=8, seed=0, num_samples=8)
     indices = list(sampler)
     # All indices must be valid (no IndexError raised).
     assert all(0 <= i < len(ds) for i in indices)
@@ -102,11 +98,11 @@ def test_multitask_sampler_handles_small_bucket_with_replacement() -> None:
 @pytest.mark.unit
 def test_success_only_sampler_yields_only_success_indices() -> None:
     records: list[dict[str, Any]] = [
-        {"task_id": "t", "success": True},   # 0
+        {"task_id": "t", "success": True},  # 0
         {"task_id": "t", "success": False},  # 1
-        {"task_id": "t", "success": True},   # 2
+        {"task_id": "t", "success": True},  # 2
         {"task_id": "t", "success": False},  # 3
-        {"task_id": "t", "success": True},   # 4
+        {"task_id": "t", "success": True},  # 4
     ]
     ds = _FakeDataset(records)
     sampler = SuccessOnlySampler(ds, seed=0)
@@ -117,9 +113,7 @@ def test_success_only_sampler_yields_only_success_indices() -> None:
 
 @pytest.mark.unit
 def test_success_only_sampler_is_deterministic_given_seed() -> None:
-    records: list[dict[str, Any]] = [
-        {"task_id": "t", "success": True} for _ in range(10)
-    ]
+    records: list[dict[str, Any]] = [{"task_id": "t", "success": True} for _ in range(10)]
     ds = _FakeDataset(records)
     a = list(SuccessOnlySampler(ds, seed=1))
     b = list(SuccessOnlySampler(ds, seed=1))
@@ -131,9 +125,7 @@ def test_success_only_sampler_is_deterministic_given_seed() -> None:
 
 @pytest.mark.unit
 def test_success_only_sampler_empty_when_no_successes() -> None:
-    records: list[dict[str, Any]] = [
-        {"task_id": "t", "success": False} for _ in range(5)
-    ]
+    records: list[dict[str, Any]] = [{"task_id": "t", "success": False} for _ in range(5)]
     sampler = SuccessOnlySampler(_FakeDataset(records))
     assert list(sampler) == []
     assert len(sampler) == 0

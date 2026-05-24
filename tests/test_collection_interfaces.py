@@ -71,9 +71,7 @@ def test_envlike_protocol_detects_minimal_env() -> None:
     """A duck-typed env satisfies EnvLike."""
 
     class _MiniEnv:
-        def reset(
-            self, seed: int
-        ) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
+        def reset(self, seed: int) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
             return {}, {}
 
         def step(

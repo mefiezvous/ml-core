@@ -35,9 +35,7 @@ class _FakeEnv:
             "joint_positions": np.zeros(7, dtype=np.float32),
         }
 
-    def reset(
-        self, seed: int
-    ) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
+    def reset(self, seed: int) -> tuple[dict[str, NDArray[np.floating[Any]]], dict[str, Any]]:
         self.reset_seeds.append(seed)
         self._step_count = 0
         return self._obs(), {}

@@ -28,9 +28,7 @@ def filter_by_success(episodes: list[Episode]) -> list[Episode]:
     return [ep for ep in episodes if ep.success]
 
 
-def balance_by_task(
-    episodes: list[Episode], target_per_task: int | None = None
-) -> list[Episode]:
+def balance_by_task(episodes: list[Episode], target_per_task: int | None = None) -> list[Episode]:
     """Cap the number of episodes per ``task_id``.
 
     Args:

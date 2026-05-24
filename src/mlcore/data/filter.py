@@ -38,9 +38,7 @@ except ImportError:  # pragma: no cover - torch is a runtime dep but guard anywa
 def _require_torch() -> None:
     """Raise ``RuntimeError`` if ``torch`` is not importable."""
     if not _TORCH_AVAILABLE:
-        raise RuntimeError(
-            "torch is required for mlcore.data.filter; install with 'uv sync'."
-        )
+        raise RuntimeError("torch is required for mlcore.data.filter; install with 'uv sync'.")
 
 
 def _coerce_success(value: Any) -> bool:
@@ -133,9 +131,7 @@ class TaskFilter:
         """
         _require_torch()
         allow: frozenset[str] = self._allow
-        indices: list[int] = [
-            i for i in range(len(dataset)) if str(dataset[i]["task_id"]) in allow
-        ]
+        indices: list[int] = [i for i in range(len(dataset)) if str(dataset[i]["task_id"]) in allow]
         return Subset(dataset, indices)
 
 

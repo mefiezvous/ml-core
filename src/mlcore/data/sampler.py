@@ -119,8 +119,7 @@ class MultiTaskBalancedSampler(Sampler[int]):
         self._num_samples: int = (total // batch_size) * batch_size
         if self._num_samples == 0:
             logger.warning(
-                "MultiTaskBalancedSampler will yield 0 samples "
-                "(num_samples={}, batch_size={}).",
+                "MultiTaskBalancedSampler will yield 0 samples (num_samples={}, batch_size={}).",
                 total,
                 batch_size,
             )
