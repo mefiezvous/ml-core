@@ -48,3 +48,8 @@ markers = [
     "unit: fast unit tests without GPU",
     "gpu: tests requiring GPU",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]

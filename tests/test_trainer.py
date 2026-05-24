@@ -249,6 +249,25 @@ class TestTrainer:
 
         assert trainer._wandb_enabled is False
 
+    def test_setup_mlflow_logs_lineage_tags(self, training_cfg: Any) -> None:
+        from mlcore.training.trainer import Trainer  # noqa: PLC0415
+
+        policy = _make_mock_policy()
+        with patch("mlcore.training.trainer.mlflow") as mock_mlflow:
+            Trainer(
+                training_cfg,
+                policy,
+                _make_dataloader(),
+                robot_name="cube_reach_v1",
+                policy_type="act",
+            )
+
+        mock_mlflow.set_tags.assert_called_once()
+        tags = mock_mlflow.set_tags.call_args[0][0]
+        assert tags["dataset.repo_id"] == "mefiezvous/cube-reach-v1-dataset"
+        assert tags["policy.type"] == "act"
+        assert tags["robot.name"] == "cube_reach_v1"
+
     def test_train_dataloader_cycles_when_exhausted(self, training_cfg: Any) -> None:
         from mlcore.training.trainer import Trainer  # noqa: PLC0415
 

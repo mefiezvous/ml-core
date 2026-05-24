@@ -15,3 +15,4 @@ eval_reports/
 mlruns/
 *.ckpt
 *.pt
+.coverage

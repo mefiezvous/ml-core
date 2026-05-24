@@ -1,33 +1,31 @@
-# ml-core — CLAUDE.md
+# CLAUDE.md — ml-core
 
-## Rôle
+## Identity
+Shared ML library (Apache-2.0): policies, training, evaluation, data collection, robot specs.
+Importable from both public (`lerobot-playground-portfolio`) and private (`_private/my-robot-stack`) layers without IP cross-contamination. Python 3.12+.
 
-Layer Apache-2.0 partagé entre PUBLIC (`lerobot-playground-portfolio`) et PRIVATE (`my-robot-stack`).
-Contient le code ML générique : wrappers de politique, boucle d'entraînement, évaluation.
+## Critical Rules
+1. NEVER import from `playground.*`, `my_robot.*`, or any downstream consumer (cycle / IP leak).
+2. NEVER reference specific robots, brand names, production configs.
+3. SPDX header in every `.py`:
+   `# SPDX-FileCopyrightText: 2026 Arthur Mouraud`
+   `# SPDX-License-Identifier: Apache-2.0`
+4. `from loguru import logger` — no `print()`.
+5. No direct `os.environ` access.
+6. Path namespacing `{robot_name}/{policy_type}/` is non-negotiable for checkpoints, MLflow, eval reports.
 
-## Règles d'import
+## Code Standards
+- mypy strict, type hints everywhere.
+- TDD: tests before code. Mark `@pytest.mark.unit`.
+- Coverage gate: 60% (enforced).
+- Google-style docstrings on public API.
 
-- `ml-core` peut importer depuis `lerobot`, `mlflow`, `hydra`, `numpy`, `torch`, `loguru`.
-- `ml-core` **ne doit pas** importer depuis `playground`, `my_robot_stack`, ni `robotics_platform_template`.
-- PUBLIC et PRIVATE importent depuis `mlcore.*`.
+## Documentation enfant
+- [README.md](README.md) — purpose, install, quickstart, namespacing
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — module map, contracts, consumers
+- [docs/ROADMAP.md](docs/ROADMAP.md) — forward-looking
+- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — workflow, import rules
 
-## Convention de nommage des chemins (non-négociable)
-
-Tous les chemins de sortie sont construits automatiquement depuis `robot_name` et `policy_type` :
-
-| Artefact | Chemin |
-|---|---|
-| Checkpoints | `checkpoints/{robot_name}/{policy_type}/checkpoint_XXXXXXXX.ckpt` |
-| MLflow runs | `mlruns/{robot_name}_{policy_type}/` |
-| Rapports d'éval | `eval_reports/{robot_name}/{policy_type}/eval_report.json` |
-
-`robot_name` et `policy_type` sont passés comme paramètres directs à `Trainer` et `Evaluator`
-(pas dans la config Hydra — pour rester utilisable sans Hydra depuis PRIVATE).
-
-## Conventions de code
-
-- SPDX header dans tout `.py` : `# SPDX-FileCopyrightText: 2026 Arthur Mouraud` + `# SPDX-License-Identifier: Apache-2.0`
-- Pas de `print()` — `from loguru import logger` uniquement
-- `mypy --strict` — type hints partout
-- TDD : tests écrits avant le code
-- `@pytest.mark.unit` sur tous les tests
+## Workspace context (non committé)
+- Cross-repo rules & memory : `../CLAUDE.md` racine workspace
+- État volatile (branche active, P0) : `memory/project_state.md`
