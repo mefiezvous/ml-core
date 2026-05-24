@@ -1,41 +1,25 @@
 # Contributing — ml-core
 
-This library is the shared algorithm layer, importable by both public and private consumers. Contributions must preserve that boundary.
+This repo is the shared, robot-agnostic algorithm layer. Contributions must preserve that genericity and the import-direction discipline.
 
-## Import rules (non-negotiable)
+## Strict rules
 
-`ml-core` may import:
-- `lerobot`, `mlflow`, `hydra`, `omegaconf`
-- `numpy`, `torch`, `huggingface_hub`, `loguru`
-- `robotics_platform.hal.*` (types only)
-
-`ml-core` may **NOT** import:
-- `playground.*` (would create a cycle with `lerobot-playground-portfolio`)
-- `my_robot.*` (would leak proprietary code into Apache-2.0)
-- Anything that names a specific robot or production task
-
-## Code standards
-
-1. SPDX header on every `.py`:
+1. **No hardware-specific code.** No robot brand names, no model numbers, no production configs in `src/mlcore/`. The only concrete spec allowed in tree is the generic example `cube_reach_v1`.
+2. **No downstream imports.** `mlcore` may not import from any consumer package — that would create cycles and leak non-Apache-2.0 code into Apache-2.0 sources.
+3. **No proprietary references.** No mention of `LicenseRef-Proprietary` or `All Rights Reserved`. License is Apache-2.0, period.
+4. **SPDX header** on every `.py`:
    ```
    # SPDX-FileCopyrightText: 2026 Arthur Mouraud
    # SPDX-License-Identifier: Apache-2.0
    ```
-2. `from loguru import logger` — never `print()`.
-3. No direct `os.environ` access — Hydra cfg or explicit env-var checks.
-4. Type hints everywhere; `mypy --strict` clean.
-5. Google-style docstrings on public API.
-6. TDD: tests written before implementation. Mark all unit tests with `@pytest.mark.unit`.
-
-## Namespacing convention
-
-Any new artefact path must follow `{robot_name}/{policy_type}/` segmentation. `robot_name` and `policy_type` are passed as direct parameters (not via Hydra cfg) so the library remains usable from non-Hydra callers.
+5. **Coverage ≥60%** on `src/mlcore/` — enforced by `--cov-fail-under=60`. PRs that lower coverage are rejected.
+6. **Namespacing.** Any new artefact path must follow `{robot_name}/{policy_type}/`. `robot_name` and `policy_type` are passed as direct parameters (not via Hydra cfg) so the library remains usable from non-Hydra callers.
 
 ## Workflow
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`
-- Feature branches only — no direct commits to `main`.
-- PR required (even solo), CI must be green.
+- Feature branches only — no direct commits to `master`.
+- PR required (even solo). CI must be green before merge.
 
 ## Local checks
 
@@ -45,3 +29,18 @@ uv run pytest --cov-fail-under=60
 uv run mypy src/
 uv run ruff check src/ tests/
 ```
+
+Pre-commit hooks (`ruff`, `mypy`, anti-leak) run on every commit.
+
+## Code standards
+
+- `typing.Protocol` (`@runtime_checkable`) for public contracts; no ABCs.
+- Type hints everywhere; mypy strict mode.
+- Google-style docstrings on every public API.
+- `from loguru import logger` — never `print()`.
+- No direct `os.environ` access — Hydra cfg or explicit env-var checks.
+- TDD: tests written before implementation. Mark unit tests with `@pytest.mark.unit`.
+
+## What does NOT belong here
+
+Anything tied to a specific robot, simulator instance, production task, or proprietary stack. Hardware adapters belong in `robotics-platform-template` (HAL Protocols) or in the consumer that owns the hardware. Task-specific pipelines and configs belong in the consumer repo that runs them.

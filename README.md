@@ -4,37 +4,29 @@
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 
 > Shared ML library for robotic policy training, evaluation, and data collection.
-> Apache-2.0. Used by both public and private downstream layers without IP cross-contamination.
+> Robot-agnostic building blocks importable from any downstream layer.
 
 ## What this is
 
-`ml-core` is the algorithm layer of the workspace. It provides generic, reusable building blocks:
+A reusable algorithm layer providing:
+- `BasePolicy` — Protocol shared by all policy wrappers (`select_action`, `forward`, `save`, `load_checkpoint`)
+- `ACTWrapper`, `DiffusionWrapper` — thin wrappers around LeRobot policies
+- `Trainer` — Hydra-configurable training loop with MLflow + checkpoint resume
+- `Evaluator` + `EvalResult` — rollout-based metrics with namespaced reports
+- `RobotSpec` + registry + `GenericScriptedPolicy` — declarative robot descriptors
+- `ObservationBuilder` — task-agnostic obs dict → flat state vector
+- `collection.*` — scripted, rollout, teleop collectors + `HubSink` for LeRobotDataset v3.0
+- `data.*` — filters, samplers, feature-schema builders
 
-- **Policies**: thin wrappers around LeRobot's `ACTPolicy` and `DiffusionPolicy` (`mlcore.policies`)
-- **Training**: Hydra-configurable `Trainer` with MLflow + checkpoint management (`mlcore.training`)
-- **Evaluation**: `Evaluator` + `EvalResult` with success/reward metrics (`mlcore.eval`)
-- **Data collection**: scripted, teleop, rollout, curation, sink (`mlcore.collection`)
-- **Robot specs**: `RobotSpec` declarative descriptor + registry + generic scripted policy (`mlcore.robots`)
-- **Observation**: builders for enriched obs vectors (`mlcore.observation`)
-- **Data**: filters, samplers, schemas (`mlcore.data`)
-
-It depends on `robotics-platform-template` for the HAL types. It does **not** know about specific robots or training tasks — those live in downstream consumers.
+Depends on `robotics-platform-template` for HAL types. Zero hardware-specific code, zero proprietary references.
 
 ## Install
 
-As a local path dependency:
+As a local path dependency in your `pyproject.toml`:
 
 ```toml
 [tool.uv.sources]
 ml-core = { path = "../ml-core", editable = true }
-```
-
-Then in your code:
-
-```python
-from mlcore.policies.act_wrapper import ACTWrapper
-from mlcore.training.trainer import Trainer
-from mlcore.eval.evaluator import Evaluator, EvalResult
 ```
 
 ## Quickstart
@@ -50,13 +42,13 @@ trainer = Trainer(
     policy_type="act",
 )
 trainer.train()
-# Checkpoints land in: checkpoints/cube_reach_v1/act/checkpoint_XXXXXXXX.ckpt
-# MLflow runs in:      mlruns/cube_reach_v1_act/
+# Checkpoints → checkpoints/cube_reach_v1/act/checkpoint_XXXXXXXX.ckpt
+# MLflow run  → mlruns/cube_reach_v1_act/
 ```
 
-`robot_name` and `policy_type` are passed directly (not via Hydra) so the lib is usable from non-Hydra callers too.
+`robot_name` and `policy_type` are passed directly (not via Hydra) so the library is usable from non-Hydra callers too.
 
-## Path namespacing convention
+Artefact paths are always namespaced as `{robot_name}/{policy_type}/`:
 
 | Artefact | Path |
 |---|---|
@@ -64,14 +56,13 @@ trainer.train()
 | MLflow runs | `mlruns/{robot_name}_{policy_type}/` |
 | Eval reports | `eval_reports/{robot_name}/{policy_type}/eval_report.json` |
 
-This isolates artefacts between robots and between policy types — non-negotiable.
-
 ## Documentation
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — module map, interfaces, namespacing
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — module map, contracts, consumers
 - [docs/ROADMAP.md](docs/ROADMAP.md) — forward-looking
-- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — workflow, code standards, import rules
+- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — workflow & strict rules
 
 ## License
 
-Apache-2.0. Copyright 2026 Arthur Mouraud.
+Apache-2.0. See [LICENSE](LICENSE).
+Copyright 2026 Arthur Mouraud.
