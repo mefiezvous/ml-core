@@ -30,7 +30,15 @@ uv run mypy src/
 uv run ruff check src/ tests/
 ```
 
-Pre-commit hooks (`ruff`, `mypy`, anti-leak) run on every commit.
+Pre-commit hooks (`ruff`, `ruff-format`, `mypy`, `gitleaks` secret-detection) run on every
+commit. Install once after cloning:
+
+```bash
+pip install pre-commit   # or: uv tool install pre-commit
+pre-commit install
+```
+
+Run against all files manually: `pre-commit run --all-files`
 
 ## Code standards
 
