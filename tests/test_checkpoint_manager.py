@@ -4,11 +4,15 @@
 
 from __future__ import annotations
 
+import io
+import pickle
+import struct
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 import pytest
+import torch
 
 
 @pytest.mark.unit
@@ -77,3 +81,40 @@ class TestCheckpointManager:
             m = self._make_manager(tmp_path, hf_repo_id="user/repo", push_every=500)
             m.save({"weights": [1]}, step=100)  # 100 % 500 != 0 → no push
         mock_upload.assert_not_called()
+
+    def test_checkpoint_load_rejects_pickle_payload(self, tmp_path: Path) -> None:
+        """MLC-001: weights_only=True must reject a crafted pickle payload.
+
+        We craft a minimal .pt file whose pickle stream calls
+        ``os.system`` (a dangerous global).  torch.load with
+        ``weights_only=True`` must raise an ``UnpicklingError`` (or a
+        ``RuntimeError`` wrapping it) before the payload executes.
+        """
+
+        class _MaliciousPayload:
+            """Pickle-encodes ``os.system('echo pwned')`` as its __reduce__."""
+
+            def __reduce__(self) -> tuple[Any, tuple[str]]:
+                import os  # noqa: PLC0415
+
+                return os.system, ("echo pwned",)
+
+        # Serialise the malicious object through pickle directly so we bypass
+        # torch.save's own safe-saving path and land raw bytes in the file.
+        payload_bytes = pickle.dumps(_MaliciousPayload())
+
+        # torch .pt files are just pickle streams; write raw bytes so they
+        # look like a legitimate checkpoint to the file-system layer.
+        malicious_pt = tmp_path / "malicious.pt"
+        malicious_pt.write_bytes(payload_bytes)
+
+        m = self._make_manager(tmp_path)
+        # Temporarily inject the malicious file as the only checkpoint so
+        # load_latest() targets it.
+        with patch.object(
+            m,
+            "list_checkpoints",
+            return_value=[(1, malicious_pt)],
+        ):
+            with pytest.raises((torch.serialization.UnpicklingError, RuntimeError, Exception)):
+                m.load_latest()

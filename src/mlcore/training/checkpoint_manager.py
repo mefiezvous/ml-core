@@ -53,12 +53,24 @@ class CheckpointManager:
         return path
 
     def load_latest(self) -> tuple[dict[str, Any], int] | None:
-        """Load the most recent checkpoint. Returns (state, step) or None."""
+        """Load the most recent checkpoint. Returns (state, step) or None.
+
+        Uses ``weights_only=True`` (safe default since torch 2.6) to prevent
+        arbitrary code execution via pickle payloads deposited on HuggingFace Hub
+        or any other untrusted source (MLC-001).
+
+        If the checkpoint contains non-tensor Python state (e.g. optimizer
+        step counts stored as plain ints), add those types via:
+            torch.serialization.add_safe_globals([SomeClass])
+        before calling this method.  The current checkpoint format only stores
+        ``{"model": state_dict, "step": int}`` where ``int`` is already
+        whitelisted by PyTorch's safe-globals allowlist.
+        """
         checkpoints = self.list_checkpoints()
         if not checkpoints:
             return None
         step, path = checkpoints[-1]
-        state: dict[str, Any] = torch.load(path, weights_only=False)
+        state: dict[str, Any] = torch.load(path, weights_only=True)
         return state, step
 
     def list_checkpoints(self) -> list[tuple[int, Path]]:
