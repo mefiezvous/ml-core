@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 Arthur Mouraud
+# SPDX-License-Identifier: Apache-2.0
+# Pre-commit hooks for ml-core.
+# Install once with: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # --- Ruff linter + formatter (replaces flake8, isort, pyupgrade) ---
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # --- Mypy static type checking ---
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types: [python]
+        args: [src/]
+        pass_filenames: false
+
+  # --- Secret detection (gitleaks) ---
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks
+
+  # --- Python dependency vulnerability check ---
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.3
+    hooks:
+      - id: python-safety-dependencies-check
+        files: pyproject.toml

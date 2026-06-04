@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any, Iterable, Iterator, Union
 
@@ -95,7 +94,15 @@ class Trainer:
         )
 
     def _setup_wandb(self) -> None:
-        if not os.environ.get("WANDB_API_KEY"):
+        """Initialise WandB if ``logging.wandb_enabled`` is set in the Hydra config.
+
+        Using a Hydra config flag instead of probing ``os.environ`` directly
+        keeps the codebase consistent with the "no direct os.environ access"
+        rule (CLAUDE.md / MLC-008).  The WandB SDK itself reads
+        ``WANDB_API_KEY`` from the environment when ``wandb.init`` is called —
+        ml-core never touches that variable.
+        """
+        if not self._cfg.get("logging", {}).get("wandb_enabled", False):
             self._wandb_enabled = False
             return
         try:
@@ -109,7 +116,7 @@ class Trainer:
             self._wandb_enabled = True
             logger.info("WandB logging enabled")
         except ImportError:
-            logger.warning("WANDB_API_KEY is set but wandb is not installed — skipping")
+            logger.warning("logging.wandb_enabled=true but wandb is not installed — skipping")
             self._wandb_enabled = False
 
     # ------------------------------------------------------------------

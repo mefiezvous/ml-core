@@ -2,19 +2,34 @@
 # SPDX-License-Identifier: Apache-2.0
 name: CI
 
+# MLC-005: restrict default token permissions to read-only.
+# Per-job write grants only when strictly required (none currently needed).
+permissions:
+  contents: read
+
+# MLC-005: cancel in-progress runs on the same ref to avoid duplicate work.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  # MLC-010: weekly scheduled run for pip-audit CVE scanning.
+  schedule:
+    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
 
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      # MLC-004: pinned to commit SHA (v4.1.1) to prevent tag-mutation attacks.
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      # MLC-004: pinned to commit SHA (v5.4.2).
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           python-version: "3.12"
       - run: uv sync --extra dev
@@ -25,8 +40,8 @@ jobs:
     name: Type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           python-version: "3.12"
       - run: uv sync --extra dev
@@ -36,9 +51,43 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
         with:
           python-version: "3.12"
       - run: uv sync --extra dev
       - run: uv run pytest tests/ -m "not gpu" --cov=src/mlcore --cov-fail-under=60
+
+  # MLC-010: dependency vulnerability scan against the lockfile.
+  # Also runs on every PR and on the weekly schedule above.
+  audit:
+    name: Dependency audit (pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5.4.2
+        with:
+          python-version: "3.12"
+      - name: Install pip-audit
+        run: uv pip install pip-audit
+      - name: Run pip-audit
+        # --skip-editable: ml-core itself is a local editable install, not on
+        # PyPI, so pip-audit cannot audit it; skip it and audit all third-party
+        # deps only (the actual CVE risk surface).
+        # --ignore-vuln PYSEC-2026-139: torch CVE with no fix version available
+        # yet (2026-06-04); revisit when upstream publishes a patched release.
+        # --ignore-vuln PYSEC-2026-40/41 + CVE-2026-45804: diffusers CVEs.
+        # lerobot==0.5.1 pins diffusers<0.36 so we can't bump to 0.38.0;
+        # revisit when lerobot supports a newer diffusers.
+        # --ignore-vuln PYSEC-2026-161: starlette CVE. mlflow==3.12.0 pins
+        # starlette<1, blocking the bump to 1.0.1; revisit when mlflow
+        # supports starlette>=1.
+        # --strict dropped: it converts the editable-skip warning into a fatal
+        # error, which defeats --skip-editable.
+        run: >
+          uv run pip-audit --skip-editable
+          --ignore-vuln PYSEC-2026-139
+          --ignore-vuln PYSEC-2026-40
+          --ignore-vuln PYSEC-2026-41
+          --ignore-vuln CVE-2026-45804
+          --ignore-vuln PYSEC-2026-161
