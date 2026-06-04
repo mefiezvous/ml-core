@@ -195,3 +195,94 @@ def test_cube_reach_v1_registered() -> None:
 def test_cube_reach_v1_has_relational_feature() -> None:
     spec = get("cube_reach_v1")
     assert spec.relational_features == (("cube_pos", "ee_pos"),)
+
+
+# ---------------------------------------------------------------------------
+# MLC-009: __post_init__ invariant validation
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_zero_n_joints() -> None:
+    with pytest.raises(ValueError, match="n_joints"):
+        RobotSpec(
+            name="bad",
+            n_joints=0,
+            obs_keys=["ee_pos"],
+            action_dim=7,
+            target_pos_key="ee_pos",
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_negative_n_joints() -> None:
+    with pytest.raises(ValueError, match="n_joints"):
+        RobotSpec(
+            name="bad",
+            n_joints=-1,
+            obs_keys=["ee_pos"],
+            action_dim=7,
+            target_pos_key="ee_pos",
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_zero_action_dim() -> None:
+    with pytest.raises(ValueError, match="action_dim"):
+        RobotSpec(
+            name="bad",
+            n_joints=7,
+            obs_keys=["ee_pos"],
+            action_dim=0,
+            target_pos_key="ee_pos",
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_empty_obs_keys() -> None:
+    with pytest.raises(ValueError, match="obs_keys"):
+        RobotSpec(
+            name="bad",
+            n_joints=7,
+            obs_keys=[],
+            action_dim=7,
+            target_pos_key="ee_pos",
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_empty_name() -> None:
+    with pytest.raises(ValueError, match="name"):
+        RobotSpec(
+            name="",
+            n_joints=7,
+            obs_keys=["ee_pos"],
+            action_dim=7,
+            target_pos_key="ee_pos",
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_success_threshold_out_of_range() -> None:
+    with pytest.raises(ValueError, match="success_threshold"):
+        RobotSpec(
+            name="bad",
+            n_joints=7,
+            obs_keys=["ee_pos"],
+            action_dim=7,
+            target_pos_key="ee_pos",
+            success_threshold=1.5,
+        )
+
+
+@pytest.mark.unit
+def test_robot_spec_rejects_zero_max_episode_steps() -> None:
+    with pytest.raises(ValueError, match="max_episode_steps"):
+        RobotSpec(
+            name="bad",
+            n_joints=7,
+            obs_keys=["ee_pos"],
+            action_dim=7,
+            target_pos_key="ee_pos",
+            max_episode_steps=0,
+        )
