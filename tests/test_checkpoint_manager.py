@@ -4,15 +4,12 @@
 
 from __future__ import annotations
 
-import io
 import pickle
-import struct
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 import pytest
-import torch
 
 
 @pytest.mark.unit
@@ -116,5 +113,8 @@ class TestCheckpointManager:
             "list_checkpoints",
             return_value=[(1, malicious_pt)],
         ):
-            with pytest.raises((torch.serialization.UnpicklingError, RuntimeError, Exception)):
+            # torch.load(weights_only=True) raises an UnpicklingError (from
+            # torch._weights_only_unpickler) before the pickle payload executes.
+            # We catch the broad Exception base to stay robust across torch versions.
+            with pytest.raises(Exception):
                 m.load_latest()
