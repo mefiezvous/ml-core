@@ -101,9 +101,7 @@ class DiffusionWrapper:
         """Restore model weights from a checkpoint file."""
         # weights_only=True is explicit to guard against pickle payloads on
         # older torch versions (<2.6) where the default was False (MLC-002).
-        checkpoint: dict[str, Any] = torch.load(
-            path, map_location=self._device, weights_only=True
-        )
+        checkpoint: dict[str, Any] = torch.load(path, map_location=self._device, weights_only=True)
         self._policy.load_state_dict(checkpoint["model"])
         logger.debug(f"DiffusionWrapper checkpoint loaded ← {path}")
 

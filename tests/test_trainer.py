@@ -257,9 +257,7 @@ class TestTrainer:
             patch("mlcore.training.trainer.mlflow"),
             patch("mlcore.training.trainer.Trainer._setup_wandb"),
         ):
-            trainer = Trainer(
-                cfg, policy, _make_dataloader(), robot_name="r", policy_type="act"
-            )
+            trainer = Trainer(cfg, policy, _make_dataloader(), robot_name="r", policy_type="act")
 
         # Verify the flag is accessible via cfg
         assert cfg.logging.wandb_enabled is True
