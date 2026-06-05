@@ -16,3 +16,11 @@ mlruns/
 *.ckpt
 *.pt
 .coverage
+.env
+.env.*
+secrets/
+proprietary_*
+*.pem
+*.key
+.DS_Store
+Thumbs.db
