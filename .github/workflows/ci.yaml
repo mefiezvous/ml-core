@@ -69,7 +69,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pip-audit
-        run: uv pip install pip-audit
+        run: uv tool install pip-audit
       - name: Run pip-audit
         # --skip-editable: ml-core itself is a local editable install, not on
         # PyPI, so pip-audit cannot audit it; skip it and audit all third-party
@@ -85,7 +85,7 @@ jobs:
         # --strict dropped: it converts the editable-skip warning into a fatal
         # error, which defeats --skip-editable.
         run: >
-          uv run pip-audit --skip-editable
+          uvx pip-audit --skip-editable
           --ignore-vuln PYSEC-2026-139
           --ignore-vuln PYSEC-2026-40
           --ignore-vuln PYSEC-2026-41
