@@ -4,7 +4,7 @@ This repo is the shared, robot-agnostic algorithm layer. Contributions must pres
 
 ## Strict rules
 
-1. **No hardware-specific code.** No robot brand names, no model numbers, no production configs in `src/mlcore/`. The only concrete spec allowed in tree is the generic example `cube_reach_v1`.
+1. **No hardware-specific code.** No robot brand names, no model numbers, no production configs in `src/mlcore/`. No concrete `RobotSpec` ships in tree — specs are data-driven via YAML (`load_specs_from_dir`) and registered by downstream consumers.
 2. **No downstream imports.** `mlcore` may not import from any consumer package — that would create cycles and leak non-Apache-2.0 code into Apache-2.0 sources.
 3. **No proprietary references.** No mention of `LicenseRef-Proprietary` or `All Rights Reserved`. License is Apache-2.0, period.
 4. **SPDX header** on every `.py`:
