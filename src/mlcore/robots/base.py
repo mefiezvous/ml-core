@@ -27,6 +27,11 @@ class RobotSpec:
             should compute the delta ``obs[b_key] - obs[a_key]``. For example
             ``(("cube_pos", "ee_pos"),)`` yields an ``ee_to_cube`` feature.
             Tuple of tuples for hashability.
+        lineage_name: Optional lineage label grouping related spec versions
+            (e.g. multiple ``name`` values derived from the same robot).
+            ``None`` for specs with no lineage metadata (legacy specs).
+        parent_id: Optional ``name`` of the spec this one was derived from.
+            ``None`` for root specs.
 
     Raises:
         ValueError: If any field invariant is violated (MLC-009).
@@ -47,6 +52,8 @@ class RobotSpec:
     ee_pos_key: str = "ee_pos"
     extra_obs_keys: tuple[str, ...] = ()
     relational_features: tuple[tuple[str, str], ...] = ()
+    lineage_name: str | None = None
+    parent_id: str | None = None
 
     def __post_init__(self) -> None:
         """Validate field invariants (MLC-009)."""
@@ -65,4 +72,9 @@ class RobotSpec:
         if self.max_episode_steps <= 0:
             raise ValueError(
                 f"RobotSpec.max_episode_steps must be > 0, got {self.max_episode_steps}"
+            )
+        if self.target_pos_key not in self.obs_keys:
+            raise ValueError(
+                f"RobotSpec.target_pos_key {self.target_pos_key!r} must be in obs_keys "
+                f"{self.obs_keys!r}"
             )

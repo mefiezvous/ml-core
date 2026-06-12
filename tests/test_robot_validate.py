@@ -25,12 +25,13 @@ def _spec(
     action_dim: int = 6,
     obs_keys: tuple[str, ...] = ("ee_pos", "target_pos"),
 ) -> RobotSpec:
+    target_pos_key = "target_pos" if "target_pos" in obs_keys else obs_keys[0]
     return RobotSpec(
         name=name,
         n_joints=action_dim,
         obs_keys=list(obs_keys),
         action_dim=action_dim,
-        target_pos_key="target_pos",
+        target_pos_key=target_pos_key,
     )
 
 

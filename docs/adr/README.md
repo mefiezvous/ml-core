@@ -37,4 +37,6 @@ If the decision is fully local to one module and reversible without breaking con
 
 ## Index
 
-_(No local ADRs yet.)_
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-001](ADR-001-yaml-spec-loader.md) | Data-driven RobotSpec loading from YAML + lineage fields | Implemented 2026-06-10 |
