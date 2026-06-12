@@ -51,7 +51,7 @@ src/mlcore/
     ├── registry.py            register() / get() / list_specs()
     ├── config_builder.py      RobotSpec → Hydra-compatible dict
     ├── generic_policy.py      GenericScriptedPolicy parameterized by spec
-    └── specs/                 Concrete specs (e.g., cube_reach_v1.py)
+    └── yaml_loader.py         load_specs_from_dir() — data-driven specs from YAML
 ```
 
 ## `policies/` — `BasePolicy` Protocol

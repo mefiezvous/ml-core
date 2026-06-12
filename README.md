@@ -58,9 +58,11 @@ Artefact paths are always namespaced as `{robot_name}/{policy_type}/`:
 
 ## Add a robot
 
-RobotSpecs live under [`src/mlcore/robots/specs/`](src/mlcore/robots/specs/) — one
-dataclass per robot, picked up by `mlcore.robots.get(name)` and validated against
-the env at pipeline startup via `mlcore.robots.validate_spec_against_env`.
+RobotSpecs are data-driven: declare one YAML file per robot and load them with
+`mlcore.robots.yaml_loader.load_specs_from_dir(path)`. Each spec is
+then picked up by `mlcore.robots.get(name)` and validated against the env at pipeline
+startup via `mlcore.robots.validate_spec_against_env`. `ml-core` ships no concrete spec
+in tree — it is robot-agnostic.
 
 The canonical end-to-end tutorial (scaffold → collect → train → eval) lives in
 the template repo: [robotics-platform-template/docs/ADD_A_ROBOT.md](../robotics-platform-template/docs/ADD_A_ROBOT.md).
