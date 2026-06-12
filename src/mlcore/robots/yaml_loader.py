@@ -9,6 +9,7 @@ ml-core agnostic of downstream repos.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +18,11 @@ from loguru import logger
 
 from mlcore.robots.base import RobotSpec
 from mlcore.robots.registry import register
+
+# WS-03: ``robot_specs/`` is writable via the orchestrator API. Even though the
+# API validates on write, this loader re-checks the id format so a hand-edited
+# or second-writer YAML cannot register a spec under an arbitrary registry key.
+_ID_RE = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 
 
 def load_specs_from_dir(specs_dir: Path) -> list[RobotSpec]:
@@ -55,8 +61,11 @@ def _load_entry(path: Path) -> dict[str, Any]:
 def _entry_to_spec(entry: dict[str, Any], path: Path) -> RobotSpec:
     try:
         fields = entry["spec"]
+        spec_id = entry["id"]
+        if not _ID_RE.fullmatch(str(spec_id)):
+            raise ValueError(f"id {spec_id!r} must match {_ID_RE.pattern}")
         return RobotSpec(
-            name=entry["id"],
+            name=spec_id,
             n_joints=fields["n_joints"],
             obs_keys=list(fields["obs_keys"]),
             action_dim=fields["action_dim"],

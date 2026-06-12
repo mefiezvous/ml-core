@@ -120,6 +120,24 @@ def test_load_specs_from_dir_raises_on_missing_required_field(tmp_path: Path) ->
 
 
 @pytest.mark.unit
+def test_load_specs_from_dir_raises_on_malformed_id(tmp_path: Path) -> None:
+    # WS-03: an id that would not pass the API validator (path traversal here)
+    # must be rejected at the loader boundary, not registered.
+    malformed = """
+id: "../escape"
+spec:
+  n_joints: 6
+  obs_keys: [ee_pos, target_pos]
+  action_dim: 6
+  target_pos_key: target_pos
+"""
+    (tmp_path / "malformed.yaml").write_text(malformed, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="must match"):
+        load_specs_from_dir(tmp_path)
+
+
+@pytest.mark.unit
 def test_load_specs_from_dir_raises_on_invalid_target_pos_key(tmp_path: Path) -> None:
     invalid_spec = """
 id: yaml_loader_invalid
