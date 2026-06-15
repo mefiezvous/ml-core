@@ -15,7 +15,7 @@ dependencies = [
     "mlflow==3.12.0",
     "loguru>=0.7.3",
     "numpy>=1.26",
-    "pyyaml>=6.0",
+    "pyyaml>=6.0.3",
     # Transitive bumps for CVE remediation (audited 2026-06-04)
     "aiohttp>=3.14.1",       # CVE-2026-34993, CVE-2026-47265
     # starlette PYSEC-2026-161: mlflow==3.12.0 pins starlette<1, blocking
