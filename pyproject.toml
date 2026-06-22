@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=9.0.3", "pytest-cov>=5", "ruff>=0.15.16", "mypy>=2.1.0", "types-pyyaml"]
+dev = ["pytest>=9.0.3", "pytest-cov>=5", "ruff>=0.15.18", "mypy>=2.1.0", "types-pyyaml"]
 
 [build-system]
 requires = ["hatchling"]
